@@ -56,7 +56,6 @@ func GetStores(req request) ([]response, error) {
 		if err != nil {
 			return []response{}, err
 		}
-		defer resp.Body.Close()
 
 		// 構造体に変換
 		var storeItems storeItems
