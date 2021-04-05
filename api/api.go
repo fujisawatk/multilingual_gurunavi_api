@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"multilingual_gurunavi_api/config"
 	"net/http"
@@ -23,6 +24,10 @@ func HandleRestsGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res, err := GetStores(request)
+	if err != nil {
+		ERROR(w, http.StatusInternalServerError, err)
+		return
+	}
 
 	JSON(w, http.StatusOK, res)
 }
@@ -60,7 +65,12 @@ func GetStores(req request) ([]response, error) {
 			responses = append(responses, tmp)
 		}
 	}
-	return responses, nil
+	// 取得レコードがない場合のエラーハンドリング
+	if len(responses) > 0 {
+		return responses, nil
+	} else {
+		return []response{}, errors.New("record not found")
+	}
 }
 
 // decodeBody 外部APIのレスポンスをデコード
