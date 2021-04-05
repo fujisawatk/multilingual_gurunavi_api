@@ -23,7 +23,7 @@ func HandleRestsGet(w http.ResponseWriter, r *http.Request) {
 
 	res, err := GetStores(request)
 
-	fmt.Fprint(w, json.NewEncoder(w).Encode(res))
+	JSON(w, http.StatusOK, res)
 }
 
 // GetStores ぐるなびAPIからデータ取得〜整形まで
