@@ -38,6 +38,12 @@ func GetStores(req request) ([]response, error) {
 
 	// 各言語ごとにぐるなびAPIにリクエストを出す
 	for _, l := range req.Langs {
+		// 対応する言語かどうか判別するバリデーション
+		err := Validation(l)
+		if err != nil {
+			return []response{}, err
+		}
+
 		url := config.GNAVIURL + "?keyid=" + config.GNAVIID + "&lang=" + l
 
 		req, err := http.NewRequest("GET", url, nil)
