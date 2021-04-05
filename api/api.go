@@ -21,21 +21,28 @@ func HandleRestsGet(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, err)
 	}
 
+	res, err := GetStores(request)
+
+	fmt.Fprint(w, json.NewEncoder(w).Encode(res))
+}
+
+// GetStores ぐるなびAPIからデータ取得〜整形まで
+func GetStores(req request) ([]response, error) {
 	var responses []response
 
 	// 各言語ごとにぐるなびAPIにリクエストを出す
-	for _, l := range request.Langs {
+	for _, l := range req.Langs {
 		url := config.GNAVIURL + "?keyid=" + config.GNAVIID + "&lang=" + l
 
 		req, err := http.NewRequest("GET", url, nil)
 		if err != nil {
-			fmt.Fprint(w, err)
+			return []response{}, err
 		}
 
 		client := new(http.Client)
 		resp, err := client.Do(req)
 		if err != nil {
-			fmt.Fprint(w, err)
+			return []response{}, err
 		}
 		defer resp.Body.Close()
 
@@ -52,8 +59,7 @@ func HandleRestsGet(w http.ResponseWriter, r *http.Request) {
 			responses = append(responses, tmp)
 		}
 	}
-
-	fmt.Fprint(w, json.NewEncoder(w).Encode(responses))
+	return responses, nil
 }
 
 // decodeBody 外部APIのレスポンスをデコード
