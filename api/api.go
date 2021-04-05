@@ -3,11 +3,27 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"multilingual_gurunavi_api/config"
 	"net/http"
 )
 
 func HandleRestsGet(w http.ResponseWriter, r *http.Request) {
+	// リクエストをパース
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		fmt.Fprint(w, err)
+	}
+
+	var request request
+	err = json.Unmarshal(body, &request)
+	if err != nil {
+		fmt.Fprint(w, err)
+	}
+
+	log.Println(request)
+	// 各言語ごとにぐるなびAPIにリクエストを出す
 	url := config.GNAVIURL + "?keyid=" + config.GNAVIID + "&lang=" + "en"
 
 	req, err := http.NewRequest("GET", url, nil)
@@ -56,6 +72,10 @@ type rest struct {
 
 type name struct {
 	Name string `json:"name"`
+}
+
+type request struct {
+	Langs []string `json:"langs"`
 }
 
 type response struct {
