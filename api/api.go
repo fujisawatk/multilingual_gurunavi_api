@@ -36,7 +36,7 @@ func HandleRestsGet(w http.ResponseWriter, r *http.Request) {
 		responses = append(responses, tmp)
 	}
 
-	fmt.Fprint(w, responses)
+	fmt.Fprint(w, json.NewEncoder(w).Encode(responses))
 }
 
 // decodeBody 外部APIのレスポンスをデコード
