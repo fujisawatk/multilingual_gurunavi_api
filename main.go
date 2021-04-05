@@ -8,6 +8,6 @@ import (
 
 func main() {
 	config.EnvLoad()
-	http.HandleFunc("/", api.HandleRestsGet)
+	http.HandleFunc("/", api.StoresGetHandler)
 	http.ListenAndServe(":8000", nil)
 }
