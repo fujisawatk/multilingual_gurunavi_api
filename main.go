@@ -1,15 +1,13 @@
 package main
 
 import (
-	"fmt"
+	"multilingual_gurunavi_api/api"
+	"multilingual_gurunavi_api/config"
 	"net/http"
 )
 
 func main() {
-	http.HandleFunc("/", handler)
+	config.EnvLoad()
+	http.HandleFunc("/", api.HandleRestsGet)
 	http.ListenAndServe(":8000", nil)
-}
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello World from Go.")
 }
