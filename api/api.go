@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"multilingual_gurunavi_api/config"
 	"net/http"
@@ -12,13 +11,15 @@ func HandleRestsGet(w http.ResponseWriter, r *http.Request) {
 	// リクエストをパース
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		fmt.Fprint(w, err)
+		ERROR(w, http.StatusBadRequest, err)
+		return
 	}
 
 	var request request
 	err = json.Unmarshal(body, &request)
 	if err != nil {
-		fmt.Fprint(w, err)
+		ERROR(w, http.StatusUnprocessableEntity, err)
+		return
 	}
 
 	res, err := GetStores(request)
