@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func HandleRestsGet(w http.ResponseWriter, r *http.Request) {
+func StoresGetHandler(w http.ResponseWriter, r *http.Request) {
 	// リクエストをパース
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
