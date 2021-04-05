@@ -1,8 +1,8 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"multilingual_gurunavi_api/config"
 	"net/http"
 )
@@ -22,10 +22,43 @@ func HandleRestsGet(w http.ResponseWriter, r *http.Request) {
 	}
 	defer resp.Body.Close()
 
-	byteArray, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Fprint(w, err)
+	// 構造体に変換
+	var storeItems storeItems
+	decodeBody(resp, &storeItems)
+
+	// レスポンス整形
+	var responses []response
+	for _, r := range storeItems.Rest {
+		tmp := response{
+			Lang: "en",
+			Name: r.Name.Name,
+		}
+		responses = append(responses, tmp)
 	}
 
-	fmt.Fprint(w, string(byteArray))
+	fmt.Fprint(w, json.NewEncoder(w).Encode(responses))
+}
+
+// decodeBody 外部APIのレスポンスをデコード
+func decodeBody(resp *http.Response, out *storeItems) error {
+	defer resp.Body.Close()
+	decoder := json.NewDecoder(resp.Body)
+	return decoder.Decode(out)
+}
+
+type storeItems struct {
+	Rest []rest `json:"rest"`
+}
+
+type rest struct {
+	Name name `json:"name"`
+}
+
+type name struct {
+	Name string `json:"name"`
+}
+
+type response struct {
+	Lang string `json:"lang"`
+	Name string `json:"name"`
 }
