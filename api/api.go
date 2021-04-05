@@ -26,7 +26,17 @@ func HandleRestsGet(w http.ResponseWriter, r *http.Request) {
 	var storeItems storeItems
 	decodeBody(resp, &storeItems)
 
-	fmt.Fprint(w, storeItems)
+	// レスポンス整形
+	var responses []response
+	for _, r := range storeItems.Rest {
+		tmp := response{
+			Lang: "en",
+			Name: r.Name.Name,
+		}
+		responses = append(responses, tmp)
+	}
+
+	fmt.Fprint(w, responses)
 }
 
 // decodeBody 外部APIのレスポンスをデコード
@@ -45,5 +55,10 @@ type rest struct {
 }
 
 type name struct {
+	Name string `json:"name"`
+}
+
+type response struct {
+	Lang string `json:"lang"`
 	Name string `json:"name"`
 }
