@@ -2,7 +2,7 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io/ioutil"
 	"multilingual_gurunavi_api/config"
 	"net/http"
@@ -12,18 +12,24 @@ func HandleRestsGet(w http.ResponseWriter, r *http.Request) {
 	// リクエストをパース
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		fmt.Fprint(w, err)
+		ERROR(w, http.StatusBadRequest, err)
+		return
 	}
 
 	var request request
 	err = json.Unmarshal(body, &request)
 	if err != nil {
-		fmt.Fprint(w, err)
+		ERROR(w, http.StatusUnprocessableEntity, err)
+		return
 	}
 
 	res, err := GetStores(request)
+	if err != nil {
+		ERROR(w, http.StatusInternalServerError, err)
+		return
+	}
 
-	fmt.Fprint(w, json.NewEncoder(w).Encode(res))
+	JSON(w, http.StatusOK, res)
 }
 
 // GetStores ぐるなびAPIからデータ取得〜整形まで
@@ -59,7 +65,12 @@ func GetStores(req request) ([]response, error) {
 			responses = append(responses, tmp)
 		}
 	}
-	return responses, nil
+	// 取得レコードがない場合のエラーハンドリング
+	if len(responses) > 0 {
+		return responses, nil
+	} else {
+		return []response{}, errors.New("record not found")
+	}
 }
 
 // decodeBody 外部APIのレスポンスをデコード
