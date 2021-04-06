@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
-	"multilingual_gurunavi_api/config"
 	"net/http"
 )
 
@@ -44,25 +43,10 @@ func GetStores(req request) ([]response, error) {
 			return []response{}, err
 		}
 
-		url := config.GNAVIURL + "?keyid=" + config.GNAVIID + "&lang=" + l
-
-		req, err := http.NewRequest("GET", url, nil)
-		if err != nil {
-			return []response{}, err
-		}
-
-		client := new(http.Client)
-		resp, err := client.Do(req)
-		if err != nil {
-			return []response{}, err
-		}
-
-		// 構造体に変換
-		var storeItems storeItems
-		decodeBody(resp, &storeItems)
+		res, err := GnaviRequest(l)
 
 		// レスポンス整形
-		for _, r := range storeItems.Rest {
+		for _, r := range res.Rest {
 			tmp := response{
 				Lang: l,
 				Name: r.Name.Name,
@@ -83,18 +67,6 @@ func decodeBody(resp *http.Response, out *storeItems) error {
 	defer resp.Body.Close()
 	decoder := json.NewDecoder(resp.Body)
 	return decoder.Decode(out)
-}
-
-type storeItems struct {
-	Rest []rest `json:"rest"`
-}
-
-type rest struct {
-	Name name `json:"name"`
-}
-
-type name struct {
-	Name string `json:"name"`
 }
 
 type request struct {
