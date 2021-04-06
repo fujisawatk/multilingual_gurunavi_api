@@ -37,10 +37,10 @@ func GetStores(req request) ([]response, error) {
 
 	// 各言語ごとにぐるなびAPIにリクエストを出す
 	for _, l := range req.Langs {
-		// 対応する言語かどうか判別するバリデーション
-		err := Validation(l)
+		err := Validation(&l)
 		if err != nil {
-			return []response{}, err
+			// 非対応言語は処理スキップ
+			continue
 		}
 
 		res, err := GnaviRequest(l)
