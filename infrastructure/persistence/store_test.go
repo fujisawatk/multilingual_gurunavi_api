@@ -71,7 +71,7 @@ func TestGnaviRequest(t *testing.T) {
 }
 
 func BenchmarkGnaviRequest(b *testing.B) {
-	r, _ := recorder.New("./fixtures/gnavi_ja")
+	r, _ := recorder.New("../../utils/test_data/gnavi_data_01")
 	defer r.Stop()
 
 	customHTTPClient := &http.Client{
