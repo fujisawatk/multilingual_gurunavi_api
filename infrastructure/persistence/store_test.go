@@ -46,7 +46,7 @@ func TestGnaviRequest(t *testing.T) {
 
 	// go-vcr のレコーダを生成
 	// 保存済みの通信内容からモック化
-	r, _ := recorder.New("../../utils/test_data/gnavi_ja")
+	r, _ := recorder.New("../../utils/test_data/gnavi_data_01")
 	defer r.Stop()
 
 	//

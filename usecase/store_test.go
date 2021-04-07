@@ -43,22 +43,27 @@ func TestGetStores(t *testing.T) {
 			wantSliceLen: 10,
 			wantErr:      false,
 		},
+		{
+			testCase:     "指定の言語が5つの場合、50個の要素を返すこと",
+			langs:        []string{"ja", "zh_cn", "zh_tw", "ko", "en"},
+			wantSliceLen: 50,
+			wantErr:      false,
+		},
 	}
-
-	// go-vcr のレコーダを生成
-	// 保存済みの通信内容からモック化
-	r, _ := recorder.New("../utils/test_data/gnavi_ja")
-	defer r.Stop()
-
-	customHTTPClient := &http.Client{
-		Transport: r,
-	}
-
-	sr := persistence.NewStorePersistence(customHTTPClient)
-	su := usecase.NewStoreUsecase(sr)
 
 	for _, tt := range tests {
 		t.Run(tt.testCase, func(t *testing.T) {
+			// go-vcr のレコーダを生成
+			// 保存済みの通信内容からモック化
+			r, _ := recorder.New("../utils/test_data/gnavi_data_01")
+			defer r.Stop()
+
+			customHTTPClient := &http.Client{
+				Transport: r,
+			}
+
+			sr := persistence.NewStorePersistence(customHTTPClient)
+			su := usecase.NewStoreUsecase(sr)
 			res, err := su.GetStores(tt.langs)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("storeUsecase.GetStores() error = %v, wantErr %v", err, tt.wantErr)
