@@ -8,6 +8,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/dnaeon/go-vcr/recorder"
 	"github.com/joho/godotenv"
 )
 
@@ -42,7 +43,18 @@ func TestGnaviRequest(t *testing.T) {
 			wantErr:      false,
 		},
 	}
-	sr := persistence.NewStorePersistence(http.DefaultClient)
+
+	// go-vcr のレコーダを生成
+	// 保存済みの通信内容からモック化
+	r, _ := recorder.New("./fixtures/gnavi_ja")
+	defer r.Stop()
+
+	//
+	customHTTPClient := &http.Client{
+		Transport: r,
+	}
+
+	sr := persistence.NewStorePersistence(customHTTPClient)
 
 	for _, tt := range tests {
 		t.Run(tt.testCase, func(t *testing.T) {
