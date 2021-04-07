@@ -30,18 +30,22 @@ func (sh *storeHandler) StoresGetHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	var request []string
+	var request request
 	err = json.Unmarshal(body, &request)
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
 
-	res, err := sh.storeUsecase.GetStores(request)
+	res, err := sh.storeUsecase.GetStores(request.Langs)
 	if err != nil {
 		responses.ERROR(w, http.StatusInternalServerError, err)
 		return
 	}
 
 	responses.JSON(w, http.StatusOK, res)
+}
+
+type request struct {
+	Langs []string `json:"langs"`
 }
