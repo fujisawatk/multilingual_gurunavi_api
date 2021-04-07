@@ -69,3 +69,18 @@ func TestGnaviRequest(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkGnaviRequest(b *testing.B) {
+	r, _ := recorder.New("./fixtures/gnavi_ja")
+	defer r.Stop()
+
+	customHTTPClient := &http.Client{
+		Transport: r,
+	}
+	sr := persistence.NewStorePersistence(customHTTPClient)
+	// ここから計測開始
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		sr.GnaviRequest("ja")
+	}
+}
