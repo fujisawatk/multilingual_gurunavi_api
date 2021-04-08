@@ -92,3 +92,35 @@ func BenchmarkGetStores(b *testing.B) {
 		su.GetStores([]string{"ja", "zh_cn", "zh_tw", "ko", "en"})
 	}
 }
+
+func BenchmarkGetStoresByWaitGroup(b *testing.B) {
+	r, _ := recorder.New("../utils/test_data/gnavi_data_01")
+	defer r.Stop()
+
+	customHTTPClient := &http.Client{
+		Transport: r,
+	}
+	sr := persistence.NewStorePersistence(customHTTPClient)
+	su := usecase.NewStoreUsecase(sr)
+	// ここから計測開始
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		su.GetStoresByWaitGroup([]string{"ja", "zh_cn", "zh_tw", "ko", "en"})
+	}
+}
+
+func BenchmarkGetStoresByChRange(b *testing.B) {
+	r, _ := recorder.New("../utils/test_data/gnavi_data_01")
+	defer r.Stop()
+
+	customHTTPClient := &http.Client{
+		Transport: r,
+	}
+	sr := persistence.NewStorePersistence(customHTTPClient)
+	su := usecase.NewStoreUsecase(sr)
+	// ここから計測開始
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		su.GetStoresByChRange([]string{"ja", "zh_cn", "zh_tw", "ko", "en"})
+	}
+}
