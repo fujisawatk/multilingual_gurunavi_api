@@ -37,7 +37,9 @@ func (sh *storeHandler) StoresGetHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	res, err := sh.storeUsecase.GetStores(request.Langs)
+	// res, err := sh.storeUsecase.GetStores(request.Langs)
+	res, err := sh.storeUsecase.GetStoresByWaitGroup(request.Langs)
+	// res, err := sh.storeUsecase.GetStoresByChRange(request.Langs)
 	if err != nil {
 		responses.ERROR(w, http.StatusInternalServerError, err)
 		return
